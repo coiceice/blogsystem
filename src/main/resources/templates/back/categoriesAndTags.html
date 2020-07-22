@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:with="title='分类/标签',active='category'">
+<header th:replace="back/header::headerFragment(${title},${active})"></header>
+<head>
+    <meta th:name="_csrf" th:content="${_csrf.token}"/>
+    <!-- 默认的header name是X-CSRF-TOKEN -->
+    <meta th:name="_csrf_header" th:content="${_csrf.headerName}"/>
+</head>
+<style>
+    .tagsspan,.categoriesspan {
+        display: inline-block;
+        background-color: #0e90d2;
+        color: white;
+        border-radius: 5px;
+        margin-left: 5px;
+        margin-bottom: 20px;
+        padding: 10px 10px 10px 10px;
+        font-size: 15px;
+        transition: all .2s;
+        cursor: pointer;
+    }
+
+    .tagsspan:hover,.categoriesspan:hover {
+        transform:scale(1.2, 1.2);
+    }
+
+    .tagscount,.categoriescount {
+        margin-left: 10px;
+    }
+</style>
+<body class="fixed-left">
+<div id="wrapper">
+    <div th:replace="back/header::header-body"></div>
+    <div class="content-page">
+        <div class="content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h4 class="page-title">标签一览</h4>
+                    </div>
+                    <div class="col-md-12" id="tagscontainer">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h4 class="page-title">分类一览</h4>
+                    </div>
+                    <div class="col-md-12" id="categoriescontainer">
+                    </div>
+                </div>
+                <div th:replace="back/footer :: footer-content"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="back/footer :: footer"></div>
+<script>
+    $.ajax({
+        type: 'get',
+        url: '/admin/tags/all',
+        dataType: 'json',
+        success: function(data) {
+            const colorful = ["#FFB800","#FF5722","#01AAED","#2F4056","#FF6666","#99CC00"];
+            let last = "";
+            for(tag in data) {
+                let color = Math.floor(Math.random() * colorful.length);
+                //确保和上一个不一样
+                while(color == last) {
+                    color = Math.floor(Math.random() * colorful.length);
+                }
+                last = color;
+                $('#tagscontainer').append("<span class='tagsspan' style='background-color: " + colorful[color] + "'>" + tag + "：<span class='tagscount'>" + data[tag] + "</span></span>");
+            }
+        }
+    });
+
+    $.ajax({
+        type: 'get',
+        url: '/admin/categories/statistic',
+        dataType: 'json',
+        success: function(data) {
+            const colorful = ["#FFB800","#FF5722","#01AAED","#2F4056","#FF6666","#99CC00"];
+            let last = "";
+            for(tag in data) {
+                let color = Math.floor(Math.random() * colorful.length);
+                //确保和上一个不一样
+                while(color == last) {
+                    color = Math.floor(Math.random() * colorful.length);
+                }
+                last = color;
+                $('#categoriescontainer').append("<span class='categoriesspan' style='background-color: " + colorful[color] + "'>" + tag + "：<span class='categoriescount'>" + data[tag] + "</span></span>");
+            }
+        }
+    });
+</script>
+</body>
+</html>
